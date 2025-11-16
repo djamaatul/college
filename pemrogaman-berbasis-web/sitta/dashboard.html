@@ -15,11 +15,26 @@
 				flex: 1;
 			}
 
-			footer {
+			#dashboard-container {
+				display: flex;
+				gap: 10px;
+				margin: 10px;
+			}
+
+			.dashboard-item {
+				display: flex;
+				flex-direction: column;
+				flex: 1;
 				padding: 10px;
-				text-align: center;
-				font-size: small;
-				border-top: 1px solid var(--secondary);
+				align-items: center;
+				border: 1px solid var(--secondary);
+			}
+			
+			@media screen and (max-width: 768px) {
+				
+				#dashboard-container {
+					flex-direction: column;
+				}
 			}
 		</style>
 		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -47,46 +62,108 @@
 					<h1 style="margin: 20px; font-weight: bold;">Dashboard Aplikasi SITTA</h1>
 					<p style="margin: 20px; font-weight: bold;">
 						<span v-text="greeting"></span>
-						<span v-text="name" style="margin-left: 10px; color: var(--primary)"></span>
+						<span v-html="name"></span>
 					</p>
+					<section id="dashboard-container">
+						<section class="dashboard-item">
+							<h2>Stok Bahan Ajar</h2>
+							<svg xmlns="https://www.w3.org/2000/svg" style="height: 400px" >
+								<g v-for="(item, index) in bahanAjar">
+									<rect :x="(40 * index)" :y="maxStockBahanAjar - (item.stok * .3) + 10" width="20" :height="item.stok * .3"  :fill="item.color" :class="index" />
+									<text :x="(40 * index)" :y="maxStockBahanAjar + 30" fill="black">{{item.stok}}</text>
+								</g>
+								<g v-for="(item, index) in bahanAjar">
+									<rect :x="0" :y="maxStockBahanAjar + (index * 20) + 50" width="10" height="10" :fill="item.color">{{item.namaBarang}}</rect>
+									<text :x="20" :y="maxStockBahanAjar + (index * 20) + 60" fill="black">{{item.namaBarang}}</text>
+								</g>
+							</svg>
+						</section>
+						<section class="dashboard-item">
+							<h2>Pengiriman</h2>
+							<svg xmlns="https://www.w3.org/2000/svg" style="height: 400px">
+								<g v-for="([key, value], index) in Object.entries(trackingStatusCount)">
+									<rect :x="(30 * index)" y="130" width="20" :height="value.total * 10" :fill="value.color" :class="index" />
+									<text :x="(30 * index) + 5" y="160" fill="black">{{value.total}}</text>
+								</g>
+								<g v-for="([key, value], index) in Object.entries(trackingStatusCount)">
+									<rect :x="0" :y="140 + (index * 20) + 40" width="10" :height="10 * value.total" :fill="value.color"></rect>
+									<text :x="20" :y="140 + (index * 20) + 50" fill="black">{{key}}</text>
+								</g>
+							</svg>
+						</section>
+					</section>
 			</main>
 
 			<footer>Tugas 1 Pemograman berbasis web - Universitas Terbuka &copy; 2025</footer>
 
 			</div>
     <script src="./js/script.js" type="module"></script>
-		<script>
+		<script type="module">
 			const { createApp, ref } = Vue;
-			const greeting = ref("");
+			import * as data from './js/data.js'
+
+			const hour = ref("");
 			const name = ref("");
+			const bahanAjar = ref([]);
+			const maxStockBahanAjar = ref(0);
+			const tracking = ref({});
+			const trackingStatusCount = ref({});
+
+			function getColor(){
+				const getHex = () => Math.floor(Math.random() * (200 - 100 + 1) + 100);
+				return `rgba(${getHex()},${getHex()},${getHex()},1)`
+			}
 
 			createApp({
 				mounted() {
-					let msg = 'Selamat pagi';
-					if (new Date().getHours() >= 10 && new Date().getHours() < 14) {
-						msg = 'Selamat siang'
-					}
-					if (new Date().getHours() >= 14) {
-						msg = 'Selamat sore'
-					}
-
-					if (new Date().getHours() >= 18) {
-						msg = 'Selamat malam'
-					}
-
-					greeting.value = msg;
+					hour.value = new Date().getHours();
+					bahanAjar.value = data.dataBahanAjar.map(r=> {
+						return {
+							...r,
+							color: getColor()
+						}
+					});
+					tracking.value = data.dataTracking;
 
 					const user = window.localStorage.getItem('user');
 
 					if (user) {
 						const data = JSON.parse(user);
-						name.value = data.nama;
+						name.value = `<span style="margin-left: 10px; color: var(--primary)">${data.nama}</span>`
+					}
+				},
+				watch:{
+					bahanAjar(next){
+						maxStockBahanAjar.value = Math.max(...next.map(r => r.stok * .3));
+					},
+					tracking(next){
+						const count = Object.values(next).reduce((acc, curr) => {
+							const prev = acc[curr.status];
+							acc[curr.status] = {
+								total: (prev?.total || 0) + 1,
+								color: getColor()
+							}
+							return acc;
+						}, {});
+
+						trackingStatusCount.value = count;
+					}
+				},
+				computed:{
+					greeting() {
+						if (hour.value >= 10 && hour.value < 14) return 'Selamat siang'
+						if (hour.value >= 14) return 'Selamat sore'
+						if (hour.value >= 18) return 'Selamat malam'
+						return 'Selamat pagi';
 					}
 				},
 				data: () => {
 					return {
-						greeting,
-						name
+						name,
+						bahanAjar,
+						maxStockBahanAjar,
+						tracking,
+						trackingStatusCount
 					}
 				}
 			}).mount("#app")

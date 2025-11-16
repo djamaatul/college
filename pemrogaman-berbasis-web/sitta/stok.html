@@ -76,7 +76,6 @@
             flex-direction: column;
             gap: 10px;
             padding: 20px;
-            border: 1px solid black;
             background-color: var(--white);
         }
 				.form .cover {
@@ -129,6 +128,9 @@
 							<input type="text" name="stok" :value="v.stok" disabled>
 						</div>
 					</div>
+					<div v-else="!bahanAjar.length">
+						Data Tidak ditemukan
+					</div>
 				</section>
     </main>
 
@@ -147,6 +149,7 @@
             <button @click.prevent="handleSaveData">Kirim</button>
         </form>
     </dialog>
+		<footer>Tugas 1 Pemograman berbasis web - Universitas Terbuka &copy; 2025</footer>
 	</div>
 	<script src="./js/script.js"></script>
 	<script src="./js/stok-app.js" type="module"></script>
