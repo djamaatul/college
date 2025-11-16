@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="./css/style.css">
+		<style>
+			body {
+				display: flex;
+				flex-direction: column;
+			}
+			main {
+				flex: 1;
+			}
+			footer {
+				padding: 10px;
+				text-align: center;
+				font-size: small;
+				border-top: 1px solid var(--glass);
+			}
+		</style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="./dashboard.html" class="active">Dashboard</a></li>
+            <li><a href="./stok.html">Informasi Bahan Ajar</a></li>
+            <li><a href="./tracking.html">Tracking Pengiriman</a></li>
+            <li>
+                <a>Laporan</a>
+                <ul>
+                    <li><a href="#">Monitoring Progress DO Bahan Ajar</a></li>
+                    <li><a href="#">Rekap Bahan Ajar</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Histori Transaksi Bahan Ajar</a></li>
+            <li><a id="btnLogout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <h1 style="margin: 20px; font-weight: bold;">Dashboard Aplikasi SITTA</h1>
+        <p style="margin: 20px; font-weight: bold;" id="greeting"></p>
+    </main>
+
+		<footer>Tugas 1 Pemograman berbasis web - Universitas Terbuka &copy; 2025</footer>
+    <script src="./js/script.js"></script>
+</body>
+</html>

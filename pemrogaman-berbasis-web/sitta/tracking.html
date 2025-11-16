@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking Pengiriman</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <style>
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin: 50px auto;
+            max-width: 768px;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            align-items: end;
+            align-self: center;
+            gap: 20px;
+						background-color: white;
+						padding: 20px;
+            border: 1px solid var(--glass);
+        }
+
+        .form > label {
+            font-size: 14px;
+        }
+
+        #tracking {
+            display: none;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        #detail {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background-color: var(--primary);
+            padding: 20px;
+            border-radius: 5px;
+            color: white;
+        }
+
+        #detail > div {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #detail > div > div {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #detail table td {
+            padding: 5px;
+            font-size: 12px;
+        }
+
+        #perjalanan {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        #perjalanan > div {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #perjalanan #status {
+            display: inline-block;
+            padding: 5px;
+            border-radius: 5px;
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        #perjalanan table td {
+            padding: 5px;
+            font-size: 12px;
+            border-top: 1px dotted var(--primary);
+            border-bottom: 1px dotted var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="./dashboard.html">Dashboard</a></li>
+            <li><a href="./stok.html">Informasi Bahan Ajar</a></li>
+            <li><a href="./tracking.html" class="active">Tracking Pengiriman</a></li>
+            <li>
+                <a>Laporan</a>
+                <ul>
+                    <li><a href="#">Monitoring Progress DO Bahan Ajar</a></li>
+                    <li><a href="#">Rekap Bahan Ajar</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Histori Transaksi Bahan Ajar</a></li>
+            <li><a id="btnLogout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <form class="form" id="form-tracking">
+            <label>
+                <span>No. DO / Billing</span>
+                <input type="text" name="nomorDO" placeholder="No. DO / Billing" class="input" required>
+            </label>
+            <button type="submit">Lacak</button>
+        </form>
+        <section id="tracking">
+            <section id="detail">
+                <div>
+                    <div>
+                        <span id="nama"></span>
+                        <span id="nomorDO"></span>
+                    </div>
+                    <p id="tanggalKirim"></p>
+                </div>
+                <table>
+                    <tr>
+                        <td style="width: 100px;">Ekspedisi</td>
+                        <td style="width: 10px;">:</td>
+                        <td><span id="ekspedisi"></span></p></td>
+                    </tr>
+                    <tr>
+                        <td>Paket</td>
+                        <td>:</td>
+                        <td><span id="paket"></span></p></td>
+                    </tr>
+                    <tr>
+                        <td>Total</td>
+                        <td>:</td>
+                        <td><span id="total"></span></p></td>
+                    </tr>
+                </table>
+            </section>
+            <section id="perjalanan">
+                <div>
+                    <h3>Perjalanan Paket</h3>
+                    <span id="status"></span>
+                </div>
+                <table>
+                </table>
+            </section>
+        </section>
+    </main>
+
+    <script src="./js/script.js"></script>
+    <script type="module">
+        import { dataTracking } from './js/data.js'
+
+        const formTracking = document.querySelector('#form-tracking')
+        const sectionTracking = document.querySelector('#tracking')
+        const nama = document.querySelector('#nama')
+        const nomorDO = document.querySelector('#nomorDO')
+        const tanggalKirim = document.querySelector('#tanggalKirim')
+        const ekspedisi = document.querySelector('#ekspedisi')
+        const paket = document.querySelector('#paket')
+        const total = document.querySelector('#total')
+        const tablePerjalanan = document.querySelector('#perjalanan table')
+        const status = document.querySelector('#status')
+
+        formTracking.onsubmit = function(event){
+            event.preventDefault()
+
+            const formData = new FormData(formTracking)
+            const noDO = formData.get('nomorDO')
+            
+            const tracking = dataTracking[noDO.toLowerCase().trim()]
+            
+            if(!tracking){
+                sectionTracking.style.display = 'none'
+                return window.alert('No. DO / Billing tidak ditemukan')
+            }
+
+            sectionTracking.style.display = 'flex'
+            nama.innerText = tracking.nama
+            nomorDO.innerText = tracking.nomorDO
+            tanggalKirim.innerText = tracking.tanggalKirim
+            ekspedisi.innerText = tracking.ekspedisi
+            paket.innerText = tracking.paket
+            total.innerText = tracking.total
+            status.innerText = tracking.status
+
+            tablePerjalanan.innerHTML = tracking.perjalanan.map(row => `
+            <tr>
+                <td>${row.keterangan}</td>
+                <td>${row.waktu}</td>
+            </tr>
+            `).join('')
+        }
+    </script>
+</body>
+</html>

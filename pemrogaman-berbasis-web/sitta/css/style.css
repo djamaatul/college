@@ -1,0 +1,206 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure, 
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+html {
+	background-color: white;
+}
+body {
+	line-height: 1;
+}
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+}
+blockquote:before, blockquote:after,
+q:before, q:after {
+	content: '';
+	content: none;
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+:root {
+	--primary: #6200EE;
+	--secondary: #3e3e3e;
+	--glass: rgba(0, 0, 0, .1);
+}
+
+body {
+	font-family: Arial, Helvetica, sans-serif;
+	min-height: 100vh;
+}
+
+a {
+	color: var(--primary);
+	font-size: smaller;
+	text-decoration: none;
+}
+
+@keyframes zoom-out {
+  0% {
+    scale: 50%
+  }
+	50% {
+		scale:120%
+	}
+  100% {
+    scale: 100%;
+  }
+}
+
+@keyframes zoom-in {
+  0% {
+    scale: 100%
+  }
+  100% {
+    scale: 0%;
+  }
+}
+
+dialog {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: auto;
+	height: auto;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: rgba(0, 0, 0, 0.5);
+	backdrop-filter: blur(3px);
+	border: 0;
+	transform: scale(1);
+}
+
+dialog > * {
+	animation: zoom-out ease .3s;
+}
+
+dialog:not([open]){
+	transform: scale(0);
+	transition-delay: .2s;
+}
+
+dialog:not([open]) > *{
+	animation: zoom-in ease .2s;
+}
+
+nav {
+	background-color: var(--secondary);
+}
+
+nav ul li {
+	background-color: var(--secondary);
+}
+
+nav > ul {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+nav > ul a {
+	display: inline-block;
+	padding: 10px;
+	color: white;
+	cursor: pointer;
+}
+nav > ul a:hover,
+nav > ul a.active {
+	background-color: var(--primary);
+}
+nav > ul li a.open + ul {
+	display: block;
+}
+nav > ul ul {
+	display: none;
+	position: absolute;
+	box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
+	background-color: white;
+}
+nav > ul ul a {
+	display: block;
+	color: white;
+}
+nav > ul ul a:hover {
+	color: white;
+}
+
+@media screen and (max-width: 768px) {
+	nav > ul {
+		flex-direction: column;
+	}
+
+	nav > ul a {
+		display: block;
+	}
+
+	nav > ul ul {
+		position: static;
+	}
+}
+
+button {
+	background-color: var(--primary);
+	color: white;
+	border: none;
+	padding: 10px;
+	box-shadow: 8px 8px var(--glass);
+	transition: ease .2s;
+}
+
+button:hover {
+	scale: 1.05;
+	cursor: pointer;
+}
+
+button:active {
+	scale: .99;
+}
+
+.input {
+	border: none;
+	border-bottom: 1px solid black;
+	padding: 5px;
+}
+
+.input:focus {
+	outline: none;
+	border-bottom: 1px solid var(--primary);
+}
+
+.form {
+	box-shadow: 8px 8px var(--glass);
+}

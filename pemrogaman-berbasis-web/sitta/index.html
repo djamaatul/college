@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <style>
+				main {
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					gap: 20px;
+				}
+        body {
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+        }
+				.title {
+					display: flex;
+					flex-direction: column;
+					align-items: center;
+					gap: 10px;
+				}
+
+				.title h1 {
+					font-size: xx-large;
+					font-weight: bolder;
+					color: var(--primary);
+				}
+
+				.title p {
+					color: grey;
+				}
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+            border: 1px solid var(--glass);
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+		<main>
+			<div class="title">
+				<h1>SITTA</h1>
+				<p>Sistem Informasi Tracking & Distribusi	Bahan Ajar</p>
+			</div>
+			<form class="form" id="form-login">
+					<h1>Selamat Datang</h1>
+					<input type="email" name="email" placeholder="Email" class="input" required>
+					<input type="password" name="password" placeholder="Password" class="input" required>
+					<a href="#" id="btnForgot" style="text-align: right;">Lupa password ?</a>
+					<button type="submit">Masuk</button>
+					<a href="#" id="btnRegister" style="text-align: center;">Belum punya akun?</a>
+			</form>
+		</main>
+
+    <dialog id="modalForgot">
+        <form class="form" id="form-forgot">
+            <h1>Lupa Password</h1>
+            <input type="email" name="email" placeholder="Email" class="input" required>
+            <button type="submit">Kirim</button>
+        </form>
+    </dialog>
+
+    <dialog id="modalRegister">
+        <form class="form" id="form-register">
+            <h1>Daftar</h1>
+            <input type="text" name="nama" placeholder="Nama" class="input" required>
+            <input type="email" name="email" placeholder="Email" class="input" required>
+            <input type="password" name="password" placeholder="Password" class="input" required>
+            <input type="password" name="konfirmasiPassword" placeholder="Konfirmasi Password" class="input" required>
+            <select name="lokasi" required>
+                <option value="UPBJJ">UPBJJ</option>
+                <option value="Pusat">Pusat</option>
+                <option value="FISIP">FISIP</option>
+            </select>
+            <button type="submit">Kirim</button>
+        </form>
+    </dialog>
+
+    <script type="module">
+        import { dataPengguna } from './js/data.js'
+
+        const formLogin = document.querySelector('#form-login')
+        const btnForgot = document.querySelector('#btnForgot')
+        const modalForgot = document.querySelector('#modalForgot')
+        const btnRegister = document.querySelector('#btnRegister')
+        const modalRegister = document.querySelector('#modalRegister')
+
+        window.onload = function(){
+            if(localStorage.getItem('user')){
+                window.open('dashboard.html', '_self', null)
+            }
+
+            document.addEventListener('click', function(event){
+                if(event.target.nodeName === 'DIALOG') event.target.close()
+            })
+        }
+
+        formLogin.onsubmit = function(event){
+            event.preventDefault()
+
+            const formData = new FormData(formLogin)
+            const email = formData.get('email')
+            const password = formData.get('password')
+
+            const user = dataPengguna.find(user => user.email.toLowerCase() === email.toLowerCase().trim())
+            
+            if(!user) return window.alert('Akun tidak ditemukan');
+            if(user.password !== password) return window.alert('Email / Password yang anda masukkan salah');
+
+            localStorage.setItem('user', JSON.stringify(user))
+            window.open('dashboard.html', '_self', null)
+        }
+
+        btnForgot.onclick = function(event){
+            event.preventDefault()
+            modalForgot.show()
+        }
+
+        btnRegister.onclick = function(event){
+            event.preventDefault()
+            modalRegister.show()
+        }
+    </script>
+</body>
+</html>

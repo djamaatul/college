@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informasi Bahan Ajar</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <style>
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            margin: 50px auto;
+            max-width: 1024px;
+        }
+
+        #data {
+            display: grid;
+            grid-template-columns: auto auto auto;
+            gap: 40px;
+        }
+
+        .data {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 20px;
+            gap: 20px;
+            border: 1px solid var(--glass);
+						box-shadow: 8px 8px var(--glass);
+            background-color: white;
+						max-width: 280px;
+        }
+
+				.data .remove {
+					aspect-ratio: 1;
+					align-self: end;
+					background-color: red;
+				}
+
+        .data p {
+            font-size: 14px;
+        }
+
+        .data img {
+            width: 100%;
+            align-self: center;
+            margin-bottom: 20px;
+        }
+
+        @media screen and (max-width: 768px) {
+            main {
+                padding: 10px;
+            }
+            
+            #data {
+                grid-template-columns: auto;
+            }
+
+            .data img {
+                width: 100%;
+            }
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+            border: 1px solid black;
+            background-color: white;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="./dashboard.html">Dashboard</a></li>
+            <li><a href="./stok.html" class="active">Informasi Bahan Ajar</a></li>
+            <li><a href="./tracking.html">Tracking Pengiriman</a></li>
+            <li>
+                <a>Laporan</a>
+                <ul>
+                    <li><a href="#">Monitoring Progress DO Bahan Ajar</a></li>
+                    <li><a href="#">Rekap Bahan Ajar</a></li>
+                </ul>
+            </li>
+            <li><a href="#">Histori Transaksi Bahan Ajar</a></li>
+            <li><a id="btnLogout">Logout</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <button type="button" id="tambah">Tambah</button>
+        <section id="data">
+        </section>
+    </main>
+
+    <dialog id="modalTambah">
+        <form class="form" id="form-tambah">
+            <h1>Tambah Data</h1>
+            <input type="text" name="kodeLokasi" placeholder="Kode Lokasi" class="input" required>
+            <input type="text" name="kodeBarang" placeholder="Kode Barang" class="input" required>
+            <input type="text" name="namaBarang" placeholder="Nama Barang" class="input" required>
+            <input type="text" name="jenisBarang" placeholder="Jenis Barang" class="input" required>
+            <input type="text" name="edisi" placeholder="Edisi" class="input" required>
+            <input type="number" name="stok" placeholder="Stok" class="input" required>
+            <input type="file" name="cover" class="input" accept="image/*" required>
+            <button type="submit">Kirim</button>
+        </form>
+    </dialog>
+
+    <script src="./js/script.js"></script>
+    <script type="module">
+        import { dataBahanAjar as _dataBahanAjar } from './js/data.js'
+
+        const data = document.querySelector('#data')
+        const btnTambah = document.querySelector('#tambah')
+        const modalTambah = document.querySelector('#modalTambah')
+        const formTambah = document.querySelector('#form-tambah')
+
+        window.onload = function(){
+            document.addEventListener('click', function(event){
+                if(event.target.nodeName === 'DIALOG') event.target.close()
+            })
+        }
+        
+        function loadData(){
+						const cached = localStorage.getItem('dataBahanAjar')
+            const dataBahanAjar = [...(cached ? JSON.parse(cached) : [])]
+
+            data.innerHTML = dataBahanAjar.map((row, index)=> `
+            <div class="data">
+								<button class="remove" onclick="hapusBahanAjar(${index})">
+									X
+								</button>
+                <img src="${row.cover}" alt="Photo">
+                <p>Kode Lokasi</p>
+                <input type="text" name="kodeLokasi" value="${row.kodeLokasi}" disabled>
+                <p>Kode Barang</p>
+                <input type="text" name="kodeBarang" value="${row.kodeBarang}" disabled>
+                <p>Nama Barang</p>
+                <input type="text" name="namaBarang" value="${row.namaBarang}" disabled>
+                <p>Jenis Barang</p>
+                <input type="text" name="jenisBarang" value="${row.jenisBarang}" disabled>
+                <p>Edisi</p>
+                <input type="text" name="edisi" value="${row.edisi}" disabled>
+                <p>Stok</p>
+                <input type="text" name="stok" value="${row.stok}" disabled>
+            </div>
+            `).join('')
+        }
+
+        btnTambah.onclick = function(event){
+            event.preventDefault()
+            modalTambah.show()
+        }
+
+        formTambah.onsubmit = function(event){
+            event.preventDefault()
+
+            const formData = new FormData(formTambah)
+            const loader = new FileReader()
+            
+            loader.onerror = () => alert('Gambar tidak valid')
+            loader.onload = function(event){
+                const payload = {
+                    ...Object.fromEntries(formData.entries()),
+                    cover: loader.result
+                }
+                
+                if(!/data:image/.test(payload.cover)){
+                    alert('Gambar tidak valid')
+                    return
+                }
+                if(localStorage.getItem('dataBahanAjar')){
+                    localStorage.setItem('dataBahanAjar', JSON.stringify([...JSON.parse(localStorage.getItem('dataBahanAjar')), payload]))
+                }else{
+                    localStorage.setItem('dataBahanAjar', JSON.stringify([payload]))
+                }
+                loadData()
+                formTambah.reset()
+                modalTambah.close()
+                alert('Berhasil mengambahkan data!')
+            }
+
+            loader.readAsDataURL(formData.get('cover'))
+        }
+
+				window.hapusBahanAjar = function(index) {
+					const bahanAjar = localStorage.getItem('dataBahanAjar')
+
+					const parsedBahanAjar = JSON.parse(bahanAjar ?? []);
+
+					const ok = window.confirm(`Anda yakin untuk menghapus ${parsedBahanAjar[index].namaBarang}`)
+
+					if (!ok) return;
+
+					localStorage.setItem('dataBahanAjar', JSON.stringify(parsedBahanAjar.filter((_, i) => i !== index)))
+
+					loadData()
+
+				}
+
+				const cached = localStorage.getItem('dataBahanAjar') 
+				if (!cached) {
+					localStorage.setItem('dataBahanAjar', JSON.stringify(_dataBahanAjar))
+				}
+        loadData()
+    </script>
+</body>
+</html>
