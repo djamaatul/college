@@ -89,7 +89,7 @@
 		</div>
 
     <script type="module">
-				const { createApp, ref, useTemplateRef } = Vue;
+				const { createApp, ref, useTemplateRef, onMounted } = Vue;
         import { dataPengguna } from './js/data.js'
         import { wait } from './js/wait.js'
 
@@ -133,17 +133,12 @@
 
 
 				createApp({
-					mounted(){
-            if(localStorage.getItem('user')){
-                window.open('dashboard.html', '_self', null)
-            }
-					},
-					methods: {
-						handleLogin,
-						handleRegister,
-						handleForgot
-					},
-					data: () => {
+					setup: () => {
+						onMounted(() => {
+							if (localStorage.getItem('user')) {
+								window.open('dashboard.html', '_self', null)
+							}
+						});
 						return {
 							email,
 							password,
@@ -151,6 +146,9 @@
 							loading,
 							modalRegister,
 							modalForgot,
+							handleLogin,
+							handleRegister,
+							handleForgot
 						}
 					}
 				}).mount('#app')

@@ -1,4 +1,4 @@
-const { createApp, ref } = Vue;
+const { createApp, ref, onMounted } = Vue;
 import { dataBahanAjar as _dataBahanAjar } from './data.js'
 
 const bahanAjar = ref([]);
@@ -81,20 +81,20 @@ function handleSaveData() {
 }
 
 const app = createApp({
-	methods: {
-		handleModalForm,
-		handleSaveData,
-		handleChangeFile,
-		handleRemove
-	},
-	mounted() {
-		syncData();
-	},
-	data() {
+	setup() {
+
+		onMounted(() => {
+			syncData();
+		});
+
 		return {
 			bahanAjar,
 			modalForm,
-			form
+			form,
+			handleModalForm,
+			handleSaveData,
+			handleChangeFile,
+			handleRemove
 		}
 	}
 })

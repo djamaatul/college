@@ -102,12 +102,12 @@
 			const { createApp, ref } = Vue;
 			import * as data from './js/data.js'
 
-			const hour = ref("");
-			const name = ref("");
-			const bahanAjar = ref([]);
-			const maxStockBahanAjar = ref(0);
-			const tracking = ref({});
-			const trackingStatusCount = ref({});
+			const hour = "";
+			const name = "";
+			const bahanAjar = [];
+			const maxStockBahanAjar = 0;
+			const tracking = {};
+			const trackingStatusCount = {};
 
 			function getColor(){
 				const getHex = () => Math.floor(Math.random() * (200 - 100 + 1) + 100);
@@ -116,25 +116,25 @@
 
 			createApp({
 				mounted() {
-					hour.value = new Date().getHours();
-					bahanAjar.value = data.dataBahanAjar.map(r=> {
+					this.hour = new Date().getHours();
+					this.bahanAjar = data.dataBahanAjar.map(r=> {
 						return {
 							...r,
 							color: getColor()
 						}
 					});
-					tracking.value = data.dataTracking;
+					this.tracking = data.dataTracking;
 
 					const user = window.localStorage.getItem('user');
 
 					if (user) {
 						const data = JSON.parse(user);
-						name.value = `<span style="margin-left: 10px; color: var(--primary)">${data.nama}</span>`
+						this.name = `<span style="margin-left: 10px; color: var(--primary)">${data.nama}</span>`
 					}
 				},
 				watch:{
 					bahanAjar(next){
-						maxStockBahanAjar.value = Math.max(...next.map(r => r.stok * .3));
+						this.maxStockBahanAjar = Math.max(...next.map(r => r.stok * .3));
 					},
 					tracking(next){
 						const count = Object.values(next).reduce((acc, curr) => {
@@ -146,19 +146,20 @@
 							return acc;
 						}, {});
 
-						trackingStatusCount.value = count;
+						this.trackingStatusCount = count;
 					}
 				},
 				computed:{
 					greeting() {
-						if (hour.value >= 10 && hour.value < 14) return 'Selamat siang'
-						if (hour.value >= 14) return 'Selamat sore'
-						if (hour.value >= 18) return 'Selamat malam'
+						if (this.hour >= 10 && this.hour < 14) return 'Selamat siang'
+						if (this.hour >= 14) return 'Selamat sore'
+						if (this.hour >= 18) return 'Selamat malam'
 						return 'Selamat pagi';
 					}
 				},
 				data: () => {
 					return {
+						hour,
 						name,
 						bahanAjar,
 						maxStockBahanAjar,
