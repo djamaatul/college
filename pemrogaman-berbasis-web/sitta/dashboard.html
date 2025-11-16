@@ -6,45 +6,90 @@
     <title>Dashboard</title>
     <link rel="stylesheet" href="./css/style.css">
 		<style>
-			body {
+			#app {
 				display: flex;
 				flex-direction: column;
 			}
+
 			main {
 				flex: 1;
 			}
+
 			footer {
 				padding: 10px;
 				text-align: center;
 				font-size: small;
-				border-top: 1px solid var(--glass);
+				border-top: 1px solid var(--secondary);
 			}
 		</style>
+		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="./dashboard.html" class="active">Dashboard</a></li>
-            <li><a href="./stok.html">Informasi Bahan Ajar</a></li>
-            <li><a href="./tracking.html">Tracking Pengiriman</a></li>
-            <li>
-                <a>Laporan</a>
-                <ul>
-                    <li><a href="#">Monitoring Progress DO Bahan Ajar</a></li>
-                    <li><a href="#">Rekap Bahan Ajar</a></li>
-                </ul>
-            </li>
-            <li><a href="#">Histori Transaksi Bahan Ajar</a></li>
-            <li><a id="btnLogout">Logout</a></li>
-        </ul>
-    </nav>
+		<nav>
+				<ul>
+						<li><a href="./dashboard.html" class="active">Dashboard</a></li>
+						<li><a href="./stok.html">Informasi Bahan Ajar</a></li>
+						<li><a href="./tracking.html">Tracking Pengiriman</a></li>
+						<li>
+								<a>Laporan</a>
+								<ul>
+										<li><a href="#">Monitoring Progress DO Bahan Ajar</a></li>
+										<li><a href="#">Rekap Bahan Ajar</a></li>
+								</ul>
+						</li>
+						<li><a href="#">Histori Transaksi Bahan Ajar</a></li>
+						<span id="time">{{time}}</span>
+						<li><a id="logout" @click="logout">Logout</a></li>
+				</ul>
+		</nav>
+		<div id="app">
+			<main>
+					<h1 style="margin: 20px; font-weight: bold;">Dashboard Aplikasi SITTA</h1>
+					<p style="margin: 20px; font-weight: bold;">
+						<span v-text="greeting"></span>
+						<span v-text="name" style="margin-left: 10px; color: var(--primary)"></span>
+					</p>
+			</main>
 
-    <main>
-        <h1 style="margin: 20px; font-weight: bold;">Dashboard Aplikasi SITTA</h1>
-        <p style="margin: 20px; font-weight: bold;" id="greeting"></p>
-    </main>
+			<footer>Tugas 1 Pemograman berbasis web - Universitas Terbuka &copy; 2025</footer>
 
-		<footer>Tugas 1 Pemograman berbasis web - Universitas Terbuka &copy; 2025</footer>
-    <script src="./js/script.js"></script>
+			</div>
+    <script src="./js/script.js" type="module"></script>
+		<script>
+			const { createApp, ref } = Vue;
+			const greeting = ref("");
+			const name = ref("");
+
+			createApp({
+				mounted() {
+					let msg = 'Selamat pagi';
+					if (new Date().getHours() >= 10 && new Date().getHours() < 14) {
+						msg = 'Selamat siang'
+					}
+					if (new Date().getHours() >= 14) {
+						msg = 'Selamat sore'
+					}
+
+					if (new Date().getHours() >= 18) {
+						msg = 'Selamat malam'
+					}
+
+					greeting.value = msg;
+
+					const user = window.localStorage.getItem('user');
+
+					if (user) {
+						const data = JSON.parse(user);
+						name.value = data.nama;
+					}
+				},
+				data: () => {
+					return {
+						greeting,
+						name
+					}
+				}
+			}).mount("#app")
+		</script>
 </body>
 </html>

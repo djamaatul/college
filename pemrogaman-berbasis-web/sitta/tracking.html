@@ -22,7 +22,7 @@
             gap: 20px;
 						background-color: white;
 						padding: 20px;
-            border: 1px solid var(--glass);
+            border: 1px solid var(--secondary);
         }
 
         .form > label {
@@ -30,7 +30,7 @@
         }
 
         #tracking {
-            display: none;
+						display: flex;
             flex-direction: column;
             gap: 20px;
             padding: 20px;
@@ -58,7 +58,7 @@
         }
 
         #detail table td {
-            padding: 5px;
+            padding: 5px 0px;
             font-size: 12px;
         }
 
@@ -83,12 +83,13 @@
         }
         
         #perjalanan table td {
-            padding: 5px;
+            padding: 10px;
             font-size: 12px;
             border-top: 1px dotted var(--primary);
             border-bottom: 1px dotted var(--primary);
         }
     </style>
+		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body>
     <nav>
@@ -103,101 +104,63 @@
                     <li><a href="#">Rekap Bahan Ajar</a></li>
                 </ul>
             </li>
-            <li><a href="#">Histori Transaksi Bahan Ajar</a></li>
-            <li><a id="btnLogout">Logout</a></li>
+						<li><a href="#">Histori Transaksi Bahan Ajar</a></li>
+						<span id="time">{{time}}</span>
+						<li><a id="logout" @click="logout">Logout</a></li>
         </ul>
     </nav>
 
-    <main>
+    <main id="app">
         <form class="form" id="form-tracking">
             <label>
                 <span>No. DO / Billing</span>
-                <input type="text" name="nomorDO" placeholder="No. DO / Billing" class="input" required>
+                <input type="text" v-model="inputNomorDO" placeholder="No. DO / Billing" class="input" required>
             </label>
-            <button type="submit">Lacak</button>
+            <button type="button" @click="tracking" :disabled="loading">Lacak</button>
         </form>
-        <section id="tracking">
+        <section id="tracking" v-if="dataTrack.nomorDO">
             <section id="detail">
                 <div>
                     <div>
-                        <span id="nama"></span>
-                        <span id="nomorDO"></span>
+                        <span v-text="dataTrack.nama"></span>
+                        <span v-text="dataTrack.nomorDO"></span>
                     </div>
-                    <p id="tanggalKirim"></p>
+                    <p v-text="dataTrack.tanggalKirim"></p>
                 </div>
                 <table>
                     <tr>
                         <td style="width: 100px;">Ekspedisi</td>
                         <td style="width: 10px;">:</td>
-                        <td><span id="ekspedisi"></span></p></td>
+                        <td><span v-text="dataTrack.ekspedisi"></span></p></td>
                     </tr>
                     <tr>
                         <td>Paket</td>
                         <td>:</td>
-                        <td><span id="paket"></span></p></td>
+                        <td><span v-text="dataTrack.paket"></span></p></td>
                     </tr>
                     <tr>
                         <td>Total</td>
                         <td>:</td>
-                        <td><span id="total"></span></p></td>
+                        <td><span v-text="dataTrack.total"></span></p></td>
                     </tr>
                 </table>
             </section>
             <section id="perjalanan">
                 <div>
                     <h3>Perjalanan Paket</h3>
-                    <span id="status"></span>
+                    <span v-text="dataTrack.status"></span>
                 </div>
                 <table>
+									<tr v-for="row in dataTrack.perjalanan">
+											<td>{{row.keterangan}}</td>
+											<td>{{row.waktu}}</td>
+									</tr>
                 </table>
             </section>
         </section>
     </main>
 
     <script src="./js/script.js"></script>
-    <script type="module">
-        import { dataTracking } from './js/data.js'
-
-        const formTracking = document.querySelector('#form-tracking')
-        const sectionTracking = document.querySelector('#tracking')
-        const nama = document.querySelector('#nama')
-        const nomorDO = document.querySelector('#nomorDO')
-        const tanggalKirim = document.querySelector('#tanggalKirim')
-        const ekspedisi = document.querySelector('#ekspedisi')
-        const paket = document.querySelector('#paket')
-        const total = document.querySelector('#total')
-        const tablePerjalanan = document.querySelector('#perjalanan table')
-        const status = document.querySelector('#status')
-
-        formTracking.onsubmit = function(event){
-            event.preventDefault()
-
-            const formData = new FormData(formTracking)
-            const noDO = formData.get('nomorDO')
-            
-            const tracking = dataTracking[noDO.toLowerCase().trim()]
-            
-            if(!tracking){
-                sectionTracking.style.display = 'none'
-                return window.alert('No. DO / Billing tidak ditemukan')
-            }
-
-            sectionTracking.style.display = 'flex'
-            nama.innerText = tracking.nama
-            nomorDO.innerText = tracking.nomorDO
-            tanggalKirim.innerText = tracking.tanggalKirim
-            ekspedisi.innerText = tracking.ekspedisi
-            paket.innerText = tracking.paket
-            total.innerText = tracking.total
-            status.innerText = tracking.status
-
-            tablePerjalanan.innerHTML = tracking.perjalanan.map(row => `
-            <tr>
-                <td>${row.keterangan}</td>
-                <td>${row.waktu}</td>
-            </tr>
-            `).join('')
-        }
-    </script>
+		<script src="./js/tracking-app.js" type="module"></script>
 </body>
 </html>

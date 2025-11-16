@@ -29,7 +29,7 @@ footer, header, hgroup, menu, nav, section {
 	display: block;
 }
 html {
-	background-color: white;
+	background-color: #EFE9E3;
 }
 body {
 	line-height: 1;
@@ -53,12 +53,17 @@ table {
 :root {
 	--primary: #6200EE;
 	--secondary: #3e3e3e;
+	--white: #EFE9E3;
 	--glass: rgba(0, 0, 0, .1);
+	--red: #f44336
 }
 
-body {
+body, #app {
 	font-family: Arial, Helvetica, sans-serif;
 	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
 }
 
 a {
@@ -118,7 +123,13 @@ dialog:not([open]) > *{
 	animation: zoom-in ease .2s;
 }
 
+#logout {
+	background-color: var(--red);
+}
+
 nav {
+	display: flex;
+	align-items: center;
 	background-color: var(--secondary);
 }
 
@@ -126,15 +137,26 @@ nav ul li {
 	background-color: var(--secondary);
 }
 
+nav #time {
+	margin: 10px;
+	flex: 1;
+	display: flex;
+	justify-content: end;
+	color: var(--white);
+	font-size: small;
+}
+
 nav > ul {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
+	flex: 1;
 }
+
 nav > ul a {
 	display: inline-block;
 	padding: 10px;
-	color: white;
+	color: var(--white);
 	cursor: pointer;
 }
 nav > ul a:hover,
@@ -148,14 +170,18 @@ nav > ul ul {
 	display: none;
 	position: absolute;
 	box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
-	background-color: white;
+	background-color: var(--white);
 }
 nav > ul ul a {
 	display: block;
-	color: white;
+	color: var(--white);
 }
 nav > ul ul a:hover {
-	color: white;
+	color: var(--white);
+}
+
+input {
+	padding: 8px;
 }
 
 @media screen and (max-width: 768px) {
@@ -174,15 +200,21 @@ nav > ul ul a:hover {
 
 button {
 	background-color: var(--primary);
-	color: white;
+	color: var(--white);
 	border: none;
 	padding: 10px;
-	box-shadow: 8px 8px var(--glass);
+	box-shadow: 6px 6px var(--secondary);
 	transition: ease .2s;
 }
 
+button:disabled {
+	scale: 1 !important;
+	cursor: not-allowed !important;
+	background-color: rgba(0, 0, 0, .4);
+}
+
 button:hover {
-	scale: 1.05;
+	scale: 1.1;
 	cursor: pointer;
 }
 
@@ -198,9 +230,20 @@ button:active {
 
 .input:focus {
 	outline: none;
+	color: var(--primary);
 	border-bottom: 1px solid var(--primary);
 }
 
 .form {
-	box-shadow: 8px 8px var(--glass);
+	box-shadow: 6px 6px var(--secondary);
+}
+
+.validation-error {
+	color: red;
+	font-size: small;
+}
+
+.time {
+	color: var(--white);
+	font-size: smaller;
 }

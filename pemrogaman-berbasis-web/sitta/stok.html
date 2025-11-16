@@ -25,17 +25,22 @@
             flex-direction: column;
             padding: 10px 20px;
             gap: 20px;
-            border: 1px solid var(--glass);
-						box-shadow: 8px 8px var(--glass);
-            background-color: white;
+            border: 1px solid var(--secondary);
+						box-shadow: 6px 6px var(--secondary);
+            background-color: var(--white);
 						max-width: 280px;
         }
 
 				.data .remove {
 					aspect-ratio: 1;
 					align-self: end;
-					background-color: red;
+					background-color: #f44336;
 				}
+
+				.data .remove:hover {
+					scale: 1.1
+				}
+
 
         .data p {
             font-size: 14px;
@@ -44,8 +49,13 @@
         .data img {
             width: 100%;
             align-self: center;
-            margin-bottom: 20px;
         }
+				
+				.data .data-detail {
+					display: flex;
+					flex-direction: column;
+					gap: 8px;
+				}
 
         @media screen and (max-width: 768px) {
             main {
@@ -65,147 +75,80 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
-            padding: 10px;
+            padding: 20px;
             border: 1px solid black;
-            background-color: white;
+            background-color: var(--white);
         }
+				.form .cover {
+					width: 400px;
+					height: 500px;
+					background-size: cover;
+				}
     </style>
+		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="./dashboard.html">Dashboard</a></li>
-            <li><a href="./stok.html" class="active">Informasi Bahan Ajar</a></li>
-            <li><a href="./tracking.html">Tracking Pengiriman</a></li>
-            <li>
-                <a>Laporan</a>
-                <ul>
-                    <li><a href="#">Monitoring Progress DO Bahan Ajar</a></li>
-                    <li><a href="#">Rekap Bahan Ajar</a></li>
-                </ul>
-            </li>
-            <li><a href="#">Histori Transaksi Bahan Ajar</a></li>
-            <li><a id="btnLogout">Logout</a></li>
-        </ul>
-    </nav>
-
+	<nav>
+			<ul>
+					<li><a href="./dashboard.html">Dashboard</a></li>
+					<li><a href="./stok.html" class="active">Informasi Bahan Ajar</a></li>
+					<li><a href="./tracking.html">Tracking Pengiriman</a></li>
+					<li>
+							<a>Laporan</a>
+							<ul>
+									<li><a href="#">Monitoring Progress DO Bahan Ajar</a></li>
+									<li><a href="#">Rekap Bahan Ajar</a></li>
+							</ul>
+					</li>
+					<li><a href="#">Histori Transaksi Bahan Ajar</a></li>
+					<span id="time">{{time}}</span>
+					<li><a id="logout" @click="logout">Logout</a></li>
+			</ul>
+	</nav>
+	<div id="app">
     <main>
-        <button type="button" id="tambah">Tambah</button>
-        <section id="data">
-        </section>
+        <button type="button" @click="()=> handleModalForm(true)">Tambah</button>
+				<section id="data">
+					<div v-for="v in bahanAjar" class="data" v-if="bahanAjar.length">
+						<button class="remove" @click="()=> handleRemove(v)">
+							X
+						</button>
+						<img :src="v.cover" alt="Photo">
+						<div class="data-detail">
+							<p>Kode Lokasi</p>
+							<input type="text" name="kodeLokasi" :value="v.kodeLokasi" disabled>
+							<p>Kode Barang</p>
+							<input type="text" name="kodeBarang" :value="v.kodeBarang" disabled>
+							<p>Nama Barang</p>
+							<input type="text" name="namaBarang" :value="v.namaBarang" disabled>
+							<p>Jenis Barang</p>
+							<input type="text" name="jenisBarang" :value="v.jenisBarang" disabled>
+							<p>Edisi</p>
+							<input type="text" name="edisi" :value="v.edisi" disabled>
+							<p>Stok</p>
+							<input type="text" name="stok" :value="v.stok" disabled>
+						</div>
+					</div>
+				</section>
     </main>
 
-    <dialog id="modalTambah">
-        <form class="form" id="form-tambah">
+    <dialog :open="modalForm" @click="(e)=> handleModalForm(false, e)">
+        <form class="form">
             <h1>Tambah Data</h1>
-            <input type="text" name="kodeLokasi" placeholder="Kode Lokasi" class="input" required>
-            <input type="text" name="kodeBarang" placeholder="Kode Barang" class="input" required>
-            <input type="text" name="namaBarang" placeholder="Nama Barang" class="input" required>
-            <input type="text" name="jenisBarang" placeholder="Jenis Barang" class="input" required>
-            <input type="text" name="edisi" placeholder="Edisi" class="input" required>
-            <input type="number" name="stok" placeholder="Stok" class="input" required>
-            <input type="file" name="cover" class="input" accept="image/*" required>
-            <button type="submit">Kirim</button>
+            <input type="text" v-model="form.kodeLokasi" placeholder="Kode Lokasi" class="input" required>
+            <input type="text" v-model="form.kodeBarang" placeholder="Kode Barang" class="input" required>
+            <input type="text" v-model="form.namaBarang" placeholder="Nama Barang" class="input" required>
+            <input type="text" v-model="form.jenisBarang" placeholder="Jenis Barang" class="input" required>
+            <input type="text" v-model="form.edisi" placeholder="Edisi" class="input" required>
+            <input type="number" v-model="form.stok" placeholder="Stok" class="input" required>
+            <input type="file" class="input" accept="image/*" required @change="handleChangeFile">
+						<img :src="form.cover" v-show="form.cover" class="cover" />
+						<span v-text="form.validation" class="validation-error"></span>
+            <button @click.prevent="handleSaveData">Kirim</button>
         </form>
     </dialog>
-
-    <script src="./js/script.js"></script>
-    <script type="module">
-        import { dataBahanAjar as _dataBahanAjar } from './js/data.js'
-
-        const data = document.querySelector('#data')
-        const btnTambah = document.querySelector('#tambah')
-        const modalTambah = document.querySelector('#modalTambah')
-        const formTambah = document.querySelector('#form-tambah')
-
-        window.onload = function(){
-            document.addEventListener('click', function(event){
-                if(event.target.nodeName === 'DIALOG') event.target.close()
-            })
-        }
-        
-        function loadData(){
-						const cached = localStorage.getItem('dataBahanAjar')
-            const dataBahanAjar = [...(cached ? JSON.parse(cached) : [])]
-
-            data.innerHTML = dataBahanAjar.map((row, index)=> `
-            <div class="data">
-								<button class="remove" onclick="hapusBahanAjar(${index})">
-									X
-								</button>
-                <img src="${row.cover}" alt="Photo">
-                <p>Kode Lokasi</p>
-                <input type="text" name="kodeLokasi" value="${row.kodeLokasi}" disabled>
-                <p>Kode Barang</p>
-                <input type="text" name="kodeBarang" value="${row.kodeBarang}" disabled>
-                <p>Nama Barang</p>
-                <input type="text" name="namaBarang" value="${row.namaBarang}" disabled>
-                <p>Jenis Barang</p>
-                <input type="text" name="jenisBarang" value="${row.jenisBarang}" disabled>
-                <p>Edisi</p>
-                <input type="text" name="edisi" value="${row.edisi}" disabled>
-                <p>Stok</p>
-                <input type="text" name="stok" value="${row.stok}" disabled>
-            </div>
-            `).join('')
-        }
-
-        btnTambah.onclick = function(event){
-            event.preventDefault()
-            modalTambah.show()
-        }
-
-        formTambah.onsubmit = function(event){
-            event.preventDefault()
-
-            const formData = new FormData(formTambah)
-            const loader = new FileReader()
-            
-            loader.onerror = () => alert('Gambar tidak valid')
-            loader.onload = function(event){
-                const payload = {
-                    ...Object.fromEntries(formData.entries()),
-                    cover: loader.result
-                }
-                
-                if(!/data:image/.test(payload.cover)){
-                    alert('Gambar tidak valid')
-                    return
-                }
-                if(localStorage.getItem('dataBahanAjar')){
-                    localStorage.setItem('dataBahanAjar', JSON.stringify([...JSON.parse(localStorage.getItem('dataBahanAjar')), payload]))
-                }else{
-                    localStorage.setItem('dataBahanAjar', JSON.stringify([payload]))
-                }
-                loadData()
-                formTambah.reset()
-                modalTambah.close()
-                alert('Berhasil mengambahkan data!')
-            }
-
-            loader.readAsDataURL(formData.get('cover'))
-        }
-
-				window.hapusBahanAjar = function(index) {
-					const bahanAjar = localStorage.getItem('dataBahanAjar')
-
-					const parsedBahanAjar = JSON.parse(bahanAjar ?? []);
-
-					const ok = window.confirm(`Anda yakin untuk menghapus ${parsedBahanAjar[index].namaBarang}`)
-
-					if (!ok) return;
-
-					localStorage.setItem('dataBahanAjar', JSON.stringify(parsedBahanAjar.filter((_, i) => i !== index)))
-
-					loadData()
-
-				}
-
-				const cached = localStorage.getItem('dataBahanAjar') 
-				if (!cached) {
-					localStorage.setItem('dataBahanAjar', JSON.stringify(_dataBahanAjar))
-				}
-        loadData()
-    </script>
+	</div>
+	<script src="./js/script.js"></script>
+	<script src="./js/stok-app.js" type="module"></script>
 </body>
 </html>

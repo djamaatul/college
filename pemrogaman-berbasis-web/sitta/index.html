@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="./css/style.css">
+		<script src="https://unpkg.com/vue@3/dist/vue.global.js" defer></script>
     <style>
 				main {
 					display: flex;
@@ -40,95 +41,119 @@
             flex-direction: column;
             gap: 20px;
             padding: 20px;
-            border: 1px solid var(--glass);
+            border: 1px solid var(--secondary);
             background-color: white;
         }
     </style>
 </head>
 <body>
-		<main>
-			<div class="title">
-				<h1>SITTA</h1>
-				<p>Sistem Informasi Tracking & Distribusi	Bahan Ajar</p>
-			</div>
-			<form class="form" id="form-login">
-					<h1>Selamat Datang</h1>
-					<input type="email" name="email" placeholder="Email" class="input" required>
-					<input type="password" name="password" placeholder="Password" class="input" required>
-					<a href="#" id="btnForgot" style="text-align: right;">Lupa password ?</a>
-					<button type="submit">Masuk</button>
-					<a href="#" id="btnRegister" style="text-align: center;">Belum punya akun?</a>
-			</form>
-		</main>
+		<div id="app">
+			<main>
+				<div class="title">
+					<h1>SITTA</h1>
+					<p>Sistem Informasi Tracking & Distribusi	Bahan Ajar</p>
+				</div>
+				<form class="form">
+						<h1>Selamat Datang</h1>
+						<input type="email" name="email" placeholder="Email" class="input" required v-model="email">
+						<input type="password" name="password" placeholder="Password" class="input" required v-model="password">
+						<a href="#" @click="()=> handleForgot(true)" style="text-align: right;">Lupa password ?</a>
+						<button @click.prevent="handleLogin" :disabled="loading || !email || !password">Masuk</button>
+						<p v-text="validation" class="validation-error"></p>
+						<a href="#" @click="()=> handleRegister(true)" style="text-align: center;">Belum punya akun?</a>
+				</form>
+			</main>
 
-    <dialog id="modalForgot">
-        <form class="form" id="form-forgot">
-            <h1>Lupa Password</h1>
-            <input type="email" name="email" placeholder="Email" class="input" required>
-            <button type="submit">Kirim</button>
-        </form>
-    </dialog>
+			<dialog :open="modalForgot" @click="(e)=> handleForgot(false, e)">
+					<form class="form">
+							<h1>Lupa Password</h1>
+							<input type="email" name="email" placeholder="Email" class="input" required>
+							<button type="submit">Kirim</button>
+					</form>
+			</dialog>
 
-    <dialog id="modalRegister">
-        <form class="form" id="form-register">
-            <h1>Daftar</h1>
-            <input type="text" name="nama" placeholder="Nama" class="input" required>
-            <input type="email" name="email" placeholder="Email" class="input" required>
-            <input type="password" name="password" placeholder="Password" class="input" required>
-            <input type="password" name="konfirmasiPassword" placeholder="Konfirmasi Password" class="input" required>
-            <select name="lokasi" required>
-                <option value="UPBJJ">UPBJJ</option>
-                <option value="Pusat">Pusat</option>
-                <option value="FISIP">FISIP</option>
-            </select>
-            <button type="submit">Kirim</button>
-        </form>
-    </dialog>
+			<dialog :open="modalRegister"  @click="(e)=> handleRegister(false, e)">
+				<form class="form">
+						<h1>Daftar</h1>
+						<input type="text" name="nama" placeholder="Nama" class="input" required>
+						<input type="email" name="email" placeholder="Email" class="input" required>
+						<input type="password" name="password" placeholder="Password" class="input" required>
+						<input type="password" name="konfirmasiPassword" placeholder="Konfirmasi Password" class="input" required>
+						<select name="lokasi" required>
+								<option value="UPBJJ">UPBJJ</option>
+								<option value="Pusat">Pusat</option>
+								<option value="FISIP">FISIP</option>
+						</select>
+						<button type="submit">Kirim</button>
+			</dialog>
+		</div>
 
     <script type="module">
+				const { createApp, ref, useTemplateRef } = Vue;
         import { dataPengguna } from './js/data.js'
+        import { wait } from './js/wait.js'
 
-        const formLogin = document.querySelector('#form-login')
-        const btnForgot = document.querySelector('#btnForgot')
-        const modalForgot = document.querySelector('#modalForgot')
-        const btnRegister = document.querySelector('#btnRegister')
-        const modalRegister = document.querySelector('#modalRegister')
+				const email =  ref('')
+				const password = ref('')
+				const loading = ref(false)
+				const validation = ref('')
 
-        window.onload = function(){
+				const modalRegister = ref(false)
+				const modalForgot = ref(false)
+
+				async function handleLogin(){
+					try {
+						loading.value = true;
+
+						await wait(1000);
+
+						const user = dataPengguna.find(user => user.email.toLowerCase() === email.value.toLowerCase().trim())
+
+						if(!user) return validation.value = 'Akun tidak ditemukan';
+						if(user.password !== password.value) return validation.value = 'Email / Password yang anda masukkan salah';
+
+						localStorage.setItem('user', JSON.stringify(user))
+						window.open('dashboard.html', '_self', null)
+					} catch (error) {
+						
+					} finally {
+						loading.value = false;
+					}
+				}
+
+				const handleRegister = (bool, e) => {
+					if(!bool && e?.target?.tagName !== "DIALOG") return;
+					modalRegister.value = bool;
+				}
+
+				const handleForgot = (bool, e) => {
+					if(!bool && e?.target?.tagName !== "DIALOG") return;
+					modalForgot.value = bool
+				}
+
+
+				createApp({
+					mounted(){
             if(localStorage.getItem('user')){
                 window.open('dashboard.html', '_self', null)
             }
-
-            document.addEventListener('click', function(event){
-                if(event.target.nodeName === 'DIALOG') event.target.close()
-            })
-        }
-
-        formLogin.onsubmit = function(event){
-            event.preventDefault()
-
-            const formData = new FormData(formLogin)
-            const email = formData.get('email')
-            const password = formData.get('password')
-
-            const user = dataPengguna.find(user => user.email.toLowerCase() === email.toLowerCase().trim())
-            
-            if(!user) return window.alert('Akun tidak ditemukan');
-            if(user.password !== password) return window.alert('Email / Password yang anda masukkan salah');
-
-            localStorage.setItem('user', JSON.stringify(user))
-            window.open('dashboard.html', '_self', null)
-        }
-
-        btnForgot.onclick = function(event){
-            event.preventDefault()
-            modalForgot.show()
-        }
-
-        btnRegister.onclick = function(event){
-            event.preventDefault()
-            modalRegister.show()
-        }
+					},
+					methods: {
+						handleLogin,
+						handleRegister,
+						handleForgot
+					},
+					data: () => {
+						return {
+							email,
+							password,
+							validation,
+							loading,
+							modalRegister,
+							modalForgot,
+						}
+					}
+				}).mount('#app')
     </script>
 </body>
 </html>
