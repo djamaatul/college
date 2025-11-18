@@ -1,15 +1,9 @@
-const { createApp } = Vue;
-
 function getDateTime() {
 	return new Intl.DateTimeFormat("id-ID", { dateStyle: 'full', timeStyle: 'long' }).format(Date.now())
 }
 
-createApp({
+Vue.createApp({
 	mounted() {
-		const user = window.localStorage.getItem('user');
-		if (!user) {
-			window.open('/', '_self')
-		}
 		setInterval(() => {
 			this.time = getDateTime()
 		}, 1000);
@@ -24,7 +18,7 @@ createApp({
 			const confirmed = confirm("Anda yakin untuk keluar?");
 			if (!confirmed) return;
 			localStorage.removeItem("user")
-			window.open('/', '_self')
+			window.open('./index.html', '_self')
 		}
 	}
 }).mount("nav");

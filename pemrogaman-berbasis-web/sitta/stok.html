@@ -128,7 +128,7 @@
 							<input type="text" name="stok" :value="v.stok" disabled>
 						</div>
 					</div>
-					<div v-else="!bahanAjar.length">
+					<div v-else>
 						Data Tidak ditemukan
 					</div>
 				</section>
@@ -144,7 +144,7 @@
             <input type="text" v-model="form.edisi" placeholder="Edisi" class="input" required>
             <input type="number" v-model="form.stok" placeholder="Stok" class="input" required>
             <input type="file" class="input" accept="image/*" required @change="handleChangeFile">
-						<img :src="form.cover" v-show="form.cover" class="cover" />
+						<img :src="form.cover" v-if="form.cover" class="cover" />
 						<span v-text="form.validation" class="validation-error"></span>
             <button @click.prevent="handleSaveData">Kirim</button>
         </form>
@@ -152,6 +152,7 @@
 		<footer>Tugas 1 Pemograman berbasis web - Universitas Terbuka &copy; 2025</footer>
 	</div>
 	<script src="./js/script.js"></script>
-	<script src="./js/stok-app.js" type="module"></script>
+	<script src="./js/data.js"></script>
+	<script src="./js/stok-app.js"></script>
 </body>
 </html>

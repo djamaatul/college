@@ -1,4 +1,4 @@
-export const dataPengguna = [
+const dataPengguna = [
   {
     id: 1,
     nama: "Rina Wulandari",
@@ -49,7 +49,7 @@ export const dataPengguna = [
   }
 ];
 
-export const dataBahanAjar = [
+const dataBahanAjar = [
   {
     kodeLokasi: "0TMP01",
     kodeBarang: "ASIP4301",
@@ -97,7 +97,7 @@ export const dataBahanAjar = [
   }
 ];
 
-export const dataTracking = {
+const dataTracking = {
   "2023001234": {
     nomorDO: "2023001234",
     nama: "Rina Wulandari",

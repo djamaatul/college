@@ -88,10 +88,10 @@
 			</dialog>
 		</div>
 
+		<script src="./js/data.js"></script>
+		<script src="./js/wait.js"></script>
     <script type="module">
 				const { createApp, ref, useTemplateRef, onMounted } = Vue;
-        import { dataPengguna } from './js/data.js'
-        import { wait } from './js/wait.js'
 
 				const email =  ref('')
 				const password = ref('')
@@ -134,11 +134,6 @@
 
 				createApp({
 					setup: () => {
-						onMounted(() => {
-							if (localStorage.getItem('user')) {
-								window.open('dashboard.html', '_self', null)
-							}
-						});
 						return {
 							email,
 							password,

@@ -97,17 +97,10 @@
 			<footer>Tugas 1 Pemograman berbasis web - Universitas Terbuka &copy; 2025</footer>
 
 			</div>
-    <script src="./js/script.js" type="module"></script>
+    <script src="./js/script.js"></script>
+		<script src="./js/data.js"></script>
 		<script type="module">
 			const { createApp, ref } = Vue;
-			import * as data from './js/data.js'
-
-			const hour = "";
-			const name = "";
-			const bahanAjar = [];
-			const maxStockBahanAjar = 0;
-			const tracking = {};
-			const trackingStatusCount = {};
 
 			function getColor(){
 				const getHex = () => Math.floor(Math.random() * (200 - 100 + 1) + 100);
@@ -117,13 +110,13 @@
 			createApp({
 				mounted() {
 					this.hour = new Date().getHours();
-					this.bahanAjar = data.dataBahanAjar.map(r=> {
+					this.bahanAjar = dataBahanAjar.map(r=> {
 						return {
 							...r,
 							color: getColor()
 						}
 					});
-					this.tracking = data.dataTracking;
+					this.tracking = dataTracking;
 
 					const user = window.localStorage.getItem('user');
 
@@ -159,12 +152,12 @@
 				},
 				data: () => {
 					return {
-						hour,
-						name,
-						bahanAjar,
-						maxStockBahanAjar,
-						tracking,
-						trackingStatusCount
+						hour: "",
+						name: "",
+						bahanAjar: [],
+						maxStockBahanAjar: 0,
+						tracking: {},
+						trackingStatusCount: {}
 					}
 				}
 			}).mount("#app")

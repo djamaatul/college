@@ -1,8 +1,4 @@
-const { createApp } = Vue;
-import { dataTracking } from './data.js'
-import { wait } from './wait.js'
-
-const app = createApp({
+const app = Vue.createApp({
 	mounted() {
 		this.dataTracking = dataTracking;
 	},
@@ -17,6 +13,8 @@ const app = createApp({
 				return window.alert('No. DO / Billing tidak ditemukan')
 			}
 			await wait(1000);
+			this.loading = false;
+
 
 			this.dataTrack = dataTrack;
 		}

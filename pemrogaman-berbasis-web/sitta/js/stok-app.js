@@ -1,8 +1,5 @@
-const { createApp, ref, onMounted } = Vue;
-import { dataBahanAjar as _dataBahanAjar } from './data.js'
-
-const bahanAjar = ref([]);
-const form = ref({
+const bahanAjar = Vue.ref([]);
+const form = Vue.ref({
 	kodeLokasi: '',
 	kodeBarang: '',
 	namaBarang: '',
@@ -11,12 +8,12 @@ const form = ref({
 	stok: '',
 	cover: '',
 });
-const modalForm = ref(false);
+const modalForm = Vue.ref(false);
 
 function syncData() {
 	const cached = localStorage.getItem('dataBahanAjar')
 	if (!cached) {
-		localStorage.setItem('dataBahanAjar', JSON.stringify(_dataBahanAjar))
+		localStorage.setItem('dataBahanAjar', JSON.stringify(dataBahanAjar))
 	}
 
 	if (!bahanAjar.value.length) {
@@ -80,10 +77,10 @@ function handleSaveData() {
 	modalForm.value = false;
 }
 
-const app = createApp({
+const app = Vue.createApp({
 	setup() {
 
-		onMounted(() => {
+		Vue.onMounted(() => {
 			syncData();
 		});
 
