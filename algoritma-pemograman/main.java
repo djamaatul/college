@@ -1,42 +1,70 @@
-import java.util.HashMap;
-import java.util.InputMismatchException;
 import java.util.Scanner;
 
 class Salary {
 
     public static void main(String[] args) {
-        var gajiGologan = new HashMap<Character, Integer>();
-
-        gajiGologan.put('A', 5000000);
-        gajiGologan.put('B', 6500000);
-        gajiGologan.put('C', 9500000);
-
-        int gaji = 0;
-        int uangLembur = 0;
+        float[] gajiPokok = { 5000000, 6500000, 9500000 };
+        int[] percentLembur = { 30, 32, 34, 36, 38 };
 
         Scanner scan = new Scanner(System.in);
 
-        System.out.print("Masukan jabatan anda: ");
+        while (true) {
+            System.out.println("Masukan golongan anda: ");
+            System.out.println("1. A");
+            System.out.println("2. B");
+            System.out.println("3. C");
 
-        Character jabatan = scan.next().toUpperCase().charAt(0);
-        int jumlahLembur = 0;
+            if (!scan.hasNextInt()) {
+                scan.next();
+                System.out.println(
+                    "Nilai tidak valid, harap isi dengan angka pilihan"
+                );
+                continue;
+            }
 
-        try {
-            System.out.print("Masukan jumlah lembur: ");
-            jumlahLembur = scan.nextInt();
-        } catch (InputMismatchException error) {
-            System.out.println("JumlahLembur harus angka");
-        }
+            int golongan = scan.nextInt();
 
-        gaji = gajiGologan.getOrDefault(jabatan, 0);
+            if (golongan <= 0 || golongan > gajiPokok.length) {
+                System.out.println("Pilihan golongan tidak valid");
+                continue;
+            }
 
-        if (jumlahLembur > 0) {
-            if (jumlahLembur >= 5) {
-                uangLembur = (gaji * 38) / 100;
-            } else {
-                uangLembur = (gaji * (30 + (2 * (jumlahLembur - 1)))) / 100;
+            float gaji = gajiPokok[golongan - 1];
+
+            System.out.println(gaji);
+
+            while (true) {
+                System.out.println("Masukan jumlah lembur");
+
+                if (!scan.hasNextInt()) {
+                    scan.next();
+                    System.out.println(
+                        "Nilai tidak valid, harap isi dengan angka pilihan"
+                    );
+                    continue;
+                }
+
+                float gajiLembur = 0;
+
+                int jumlahLembur = scan.nextInt();
+
+                if (jumlahLembur > 0) {
+                    if (jumlahLembur >= 5) {
+                        jumlahLembur = 5;
+                    }
+                    gajiLembur = (gaji * percentLembur[jumlahLembur - 1]) / 100;
+                }
+                
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+
+                System.out.printf(
+                    "Gaji anda bulan ini adalah: %f \n",
+                    gaji + gajiLembur
+                );
+                
+                break;
             }
         }
-        System.out.println("Jumlah penghasilan: " + (gaji + uangLembur));
     }
 }
