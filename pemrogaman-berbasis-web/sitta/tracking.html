@@ -8,6 +8,7 @@
     <style>
         main {
             display: flex;
+						align-items: center;
             flex-direction: column;
             gap: 20px;
             margin: 50px auto;
@@ -17,7 +18,6 @@
         .form {
             display: flex;
             flex-direction: column;
-            align-items: end;
             align-self: center;
             gap: 20px;
 						background-color: white;
@@ -48,6 +48,7 @@
 
         #detail > div {
             display: flex;
+						gap: 20px;
             justify-content: space-between;
         }
 
@@ -116,48 +117,60 @@
                 <span>No. DO / Billing</span>
                 <input type="text" v-model="inputNomorDO" placeholder="No. DO / Billing" class="input" required>
             </label>
-            <button type="button" @click="tracking" :disabled="loading">Lacak</button>
+						<div style="display: flex; gap: 20px; align-self: flex-end;">
+							<button style="background-color: green;" type="button" @click="tambah">Tambah</button>
+							<button type="button" @click="tracking" :disabled="loading">Lacak</button>
+						</div>
         </form>
         <section id="tracking" v-if="dataTrack.nomorDO">
-            <section id="detail">
+							<section id="detail">
                 <div>
                     <div>
-                        <span v-text="dataTrack.nama"></span>
-                        <span v-text="dataTrack.nomorDO"></span>
+                        <span id="nama">{{ dataTrack.nama }}</span>
+                        <span id="nomorDO">{{ dataTrack.nim }}</span>
                     </div>
-                    <p v-text="dataTrack.tanggalKirim"></p>
+                    <p id="tanggalKirim">{{ dataTrack.tanggalKirim }}</p>
                 </div>
                 <table>
                     <tr>
                         <td style="width: 100px;">Ekspedisi</td>
                         <td style="width: 10px;">:</td>
-                        <td><span v-text="dataTrack.ekspedisi"></span></p></td>
+                        <td><span id="ekspedisi">{{ dataTrack.ekspedisi }}</span></p></td>
                     </tr>
                     <tr>
                         <td>Paket</td>
                         <td>:</td>
-                        <td><span v-text="dataTrack.paket"></span></p></td>
+                        <td><span id="paket">{{ dataTrack.paket }}</span></p></td>
                     </tr>
                     <tr>
                         <td>Total</td>
                         <td>:</td>
-                        <td><span v-text="dataTrack.total"></span></p></td>
+                        <td><span id="total">{{ dataTrack.total }}</span></p></td>
                     </tr>
                 </table>
             </section>
-            <section id="perjalanan">
-                <div>
-                    <h3>Perjalanan Paket</h3>
-                    <span v-text="dataTrack.status"></span>
-                </div>
-                <table>
-									<tr v-for="row in dataTrack.perjalanan">
-											<td>{{row.keterangan}}</td>
-											<td>{{row.waktu}}</td>
-									</tr>
-                </table>
-            </section>
         </section>
+				<dialog :open="modalCreate">
+						<form class="form" @submit.prevent="save">
+								<h1>{{ form.action == 'I' ? 'Tambah Data' : 'Ubah Data' }}</h1>
+								<input type="text" placeholder="No DO" class="input" v-model="form.noDO" required disabled>
+								<p class="text-error" v-if="errors.noDO" v-text="errors.noDO"></p>
+								<input type="text" placeholder="NIM" class="input" v-model="form.nim" required>
+								<input type="text" placeholder="Nama" class="input" v-model="form.nama" required>
+								<select v-model="form.ekspedisi" required>
+										<option value="">-- Pilih Ekspedisi --</option>
+										<option v-for="ekspedisi in pengirimanList" :value="ekspedisi.kode">{{ ekspedisi.nama }}</option>
+								</select>
+								<select v-model="form.paket" required>
+										<option value="">-- Pilih Paket --</option>
+										<option v-for="paket in paket" :value="paket.kode">{{ paket.nama }}</option>
+								</select>
+								<p v-if="paket.find(item => item.kode == form.paket)">Isi : {{ paket.find(item => item.kode == form.paket).isi.join(', ') }}</p>
+								<p v-if="paket.find(item => item.kode == form.paket)">Harga : {{ paket.find(item => item.kode == form.paket).harga }}</p>
+								<input type="date" placeholder="Tanggal Kirim" class="input" v-model="form.tanggalKirim" required>
+								<button type="submit">Kirim</button>
+						</form>
+				</dialog>
     </main>
 		<footer>Tugas 1 Pemograman berbasis web - Universitas Terbuka &copy; 2025</footer>
 

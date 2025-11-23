@@ -34,6 +34,9 @@ html {
 body {
 	line-height: 1;
 }
+main {
+	min-width: 80vw;
+}
 ol, ul {
 	list-style: none;
 }
@@ -63,7 +66,14 @@ body, #app {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+}
+
+.btn-red {
+	background-color: var(--red);
+}
+
+.btn-secondary {
+	background-color: var(--secondary);
 }
 
 a {
@@ -128,6 +138,8 @@ dialog:not([open]) > *{
 }
 
 nav {
+	position: sticky;
+	top: 0px;
 	display: flex;
 	align-items: center;
 	background-color: var(--secondary);

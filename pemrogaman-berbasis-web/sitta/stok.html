@@ -15,15 +15,15 @@
         }
 
         #data {
-            display: grid;
-            grid-template-columns: auto auto auto;
+            display: flex;
+						flex-wrap: wrap;
             gap: 40px;
         }
 
         .data {
             display: flex;
             flex-direction: column;
-            padding: 10px 20px;
+            padding: 10px 20px 20px;
             gap: 20px;
             border: 1px solid var(--secondary);
 						box-shadow: 6px 6px var(--secondary);
@@ -83,6 +83,36 @@
 					height: 500px;
 					background-size: cover;
 				}
+				.filter {
+					display: flex;
+					align-items: center;
+					gap: 20px;
+					align-self: flex-end;
+				}
+				.filter .filter-section {
+					display: flex;
+					align-items: center;
+					gap: 10px;
+				}
+				.stok {
+					display: flex;
+					gap: 10px;
+				}
+				.stok input {
+					width: 100%;
+				}
+				.stok .status-stok {
+					padding: 0px 10px;
+					display: flex;
+					justify-content: center;
+					align-items: center;
+				}
+				.catatan {
+					width: 100%;
+					padding: 5px;
+					border: 1px solid black;
+					background-color: 10px;
+				}
     </style>
 		<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 </head>
@@ -106,26 +136,68 @@
 	</nav>
 	<div id="app">
     <main>
-        <button type="button" @click="()=> handleModalForm(true)">Tambah</button>
+				<section class="filter">
+					<div class="filter-section">
+						<label>Filter</label>
+						<select name="filterList" v-model="filterBy">
+							<option value="" disabled>Pilih</option>
+							<option value="upbjj">UT Daerah</option>
+							<option value="kategori">Kategori mata kuliah</option>
+						</select>
+						<select name="filterOptions" v-model="filter" v-if="filterBy">
+							<option value="">Pilih</option>
+							<option	v-for="op in filterOptions">{{op}}</option>
+						</select>
+					</div>
+					<div class="filter-section">
+						<label>Urutkan</label>
+						<select name="kategori" v-model="sort">
+							<option value="asc">A - Z</option>
+							<option value="desc">Z - A</option>
+						</select>
+					</div>
+					<button type="button" class="btn-red" @click="handleResetFilter" v-if="filterBy">Atur ulang</button>
+				</section>
+				<section class="filter">
+					<button type="button" @click="()=> mode = 'insert'" v-if="isNormalMode">Mode ubah</button>
+					<button type="button" class="btn-secondary" @click="handleAppendData" v-if="isInsertMode">Tambah</button>
+					<button type="button" class="btn-red" @click="()=> mode = 'normal'" v-if="isInsertMode">Mode Lihat</button>
+				</section>
+
 				<section id="data">
-					<div v-for="v in bahanAjar" class="data" v-if="bahanAjar.length">
-						<button class="remove" @click="()=> handleRemove(v)">
+					<div v-for="(v) in filteredBahanAjar" class="data" v-if="bahanAjar.length" :key="v.i">
+						<button class="remove" @click="()=> handleRemove(v)" v-if="isInsertMode">
 							X
 						</button>
-						<img :src="v.cover" alt="Photo">
 						<div class="data-detail">
 							<p>Kode Lokasi</p>
-							<input type="text" name="kodeLokasi" :value="v.kodeLokasi" disabled>
-							<p>Kode Barang</p>
-							<input type="text" name="kodeBarang" :value="v.kodeBarang" disabled>
-							<p>Nama Barang</p>
-							<input type="text" name="namaBarang" :value="v.namaBarang" disabled>
-							<p>Jenis Barang</p>
-							<input type="text" name="jenisBarang" :value="v.jenisBarang" disabled>
-							<p>Edisi</p>
-							<input type="text" name="edisi" :value="v.edisi" disabled>
+							<input type="text" name="kode" v-model="bahanAjar[v.i].kode" :disabled="isNormalMode">
+							<p>Judul</p>
+							<input type="text" name="judul" v-model="bahanAjar[v.i].judul" :disabled="isNormalMode">
+							<p>Kategori</p>
+							<select name="kategori" v-model="bahanAjar[v.i].kategori" :disabled="isNormalMode">
+								<option	v-for="op in kategoriList">{{op}}</option>
+							</select>
+							<p>UT Daerah</p>
+							<select name="upbjj" v-model="bahanAjar[v.i].upbjj" :disabled="isNormalMode">
+								<option	v-for="op in upbjjList">{{op}}</option>
+							</select>
+							<p>Lokasi Rak</p>
+							<input type="text" name="lokasiRak" v-model="bahanAjar[v.i].lokasiRak" :disabled="isNormalMode">
 							<p>Stok</p>
-							<input type="text" name="stok" :value="v.stok" disabled>
+							<input type="text" name="qty" v-model="bahanAjar[v.i].qty" :disabled="isNormalMode">
+							<p>Safety Stok</p>
+							<div class="stok">
+								<input type="text" name="safety" v-model="bahanAjar[v.i].safety" :disabled="isNormalMode">
+								<span class="status-stok" v-text="v.status"
+									:style="{color: 'rgba(0,0,0,.5)', backgroundColor: colorStatus[v.status] }"></span>
+							</div>
+							<p>Catatan</p>
+							<div v-if="v.catatanHTML || isInsertMode">
+								<textarea class="catatan" v-model="bahanAjar[v.i].catatanHTML" v-if="isInsertMode"></textarea>
+								<div class="catatan" v-html="bahanAjar[v.i].catatanHTML" v-if="isNormalMode"></div>
+							</div>
+							<span v-else>-</span>
 						</div>
 					</div>
 					<div v-else>
@@ -134,21 +206,6 @@
 				</section>
     </main>
 
-    <dialog :open="modalForm" @click="(e)=> handleModalForm(false, e)">
-        <form class="form">
-            <h1>Tambah Data</h1>
-            <input type="text" v-model="form.kodeLokasi" placeholder="Kode Lokasi" class="input" required>
-            <input type="text" v-model="form.kodeBarang" placeholder="Kode Barang" class="input" required>
-            <input type="text" v-model="form.namaBarang" placeholder="Nama Barang" class="input" required>
-            <input type="text" v-model="form.jenisBarang" placeholder="Jenis Barang" class="input" required>
-            <input type="text" v-model="form.edisi" placeholder="Edisi" class="input" required>
-            <input type="number" v-model="form.stok" placeholder="Stok" class="input" required>
-            <input type="file" class="input" accept="image/*" required @change="handleChangeFile">
-						<img :src="form.cover" v-if="form.cover" class="cover" />
-						<span v-text="form.validation" class="validation-error"></span>
-            <button @click.prevent="handleSaveData">Kirim</button>
-        </form>
-    </dialog>
 		<footer>Tugas 1 Pemograman berbasis web - Universitas Terbuka &copy; 2025</footer>
 	</div>
 	<script src="./js/script.js"></script>

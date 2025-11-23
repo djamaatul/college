@@ -1,16 +1,22 @@
+const colorStatus = {
+	'Aman': '#00FF00',
+	'Menipis': '#FFFF00',
+	'Kosong': 'FF0000'
+}
+
 const bahanAjar = Vue.ref([]);
-const form = Vue.ref({
-	kodeLokasi: '',
-	kodeBarang: '',
-	namaBarang: '',
-	jenisBarang: '',
-	edisi: '',
-	stok: '',
-	cover: '',
-});
-const modalForm = Vue.ref(false);
+
+const mode = Vue.ref('normal');
+const filter = Vue.ref('');
+const filterBy = Vue.ref('');
+const sort = Vue.ref('asc');
 
 function syncData() {
+	const version = localStorage.getItem('version');
+	if (version !== releaseVersion) {
+		localStorage.setItem('version', releaseVersion);
+		localStorage.removeItem('dataBahanAjar');
+	};
 	const cached = localStorage.getItem('dataBahanAjar')
 	if (!cached) {
 		localStorage.setItem('dataBahanAjar', JSON.stringify(dataBahanAjar))
@@ -22,38 +28,8 @@ function syncData() {
 	}
 }
 
-function handleModalForm(bool, e) {
-	if (!bool && e.target.tagName !== 'DIALOG') return;
-	modalForm.value = bool;
-}
-
-async function handleChangeFile(e) {
-	if (!e.target.files) return;
-	const raw = e.target.files[0];
-
-	if (raw.size >= .3 * (1024 * 1024)) {
-		form.value.validation = "Gambar tidak boleh melebihi 300Kb";
-		return
-	} else form.value.validation = ""
-
-	const r = await new Promise(r => {
-		const loader = new FileReader()
-
-		loader.onerror = () => alert('Gambar tidak valid')
-		loader.onload = function (event) {
-
-			if (!/data:image/.test(loader.result)) {
-				alert('Gambar tidak valid')
-				return null
-			}
-			return r(loader.result)
-		}
-		loader.readAsDataURL(raw)
-	})
-
-	if (!r) return;
-
-	form.value.cover = r
+function handleAppendData() {
+	bahanAjar.value = [{}, ...bahanAjar.value]
 }
 
 function handleRemove(v) {
@@ -61,7 +37,7 @@ function handleRemove(v) {
 
 	if (!ok) return;
 
-	const result = bahanAjar.value.filter((r) => r.kodeBarang !== v.kodeBarang);
+	const result = bahanAjar.value.filter((r) => r.kode !== v.kode);
 
 	localStorage.setItem('dataBahanAjar', JSON.stringify(result))
 	bahanAjar.value = result;
@@ -69,13 +45,7 @@ function handleRemove(v) {
 	syncData();
 }
 
-function handleSaveData() {
-	const payload = [...bahanAjar.value, { ...form.value }];
-	localStorage.setItem('dataBahanAjar', JSON.stringify(payload))
-	bahanAjar.value = payload;
-	syncData();
-	modalForm.value = false;
-}
+let timeoutId;
 
 const app = Vue.createApp({
 	setup() {
@@ -84,14 +54,65 @@ const app = Vue.createApp({
 			syncData();
 		});
 
+		const filteredBahanAjar = Vue.computed(() => {
+			return bahanAjar.value.flatMap((r, i) => {
+
+				let status = 'Kosong';
+				if (r.qty >= +r.safety) status = 'Aman';
+				else if (r.qty > 0) status = 'Menipis';
+
+				if (filter.value) {
+					const exist = r[filterBy.value]?.toLowerCase().includes(filter.value.toLowerCase());
+					if (!exist) return [];
+				}
+				return { ...r, safety: +r.safety || 0, status, i };
+			}).sort((a, b) => {
+				const aa = ['judul', 'qty', 'harga'].map(k => a[k]).join(',');
+				const bb = ['judul', 'qty', 'harga'].map(k => b[k]).join(',');
+				if (sort.value === 'asc') return aa.localeCompare(bb);
+				return bb.localeCompare(bb);
+			})
+		})
+
+		const filterOptions = Vue.computed(() => {
+			return {
+				'upbjj': upbjjList,
+				'kategori': kategoriList
+			}[filterBy.value] ?? []
+		})
+
+		const handleResetFilter = () => {
+			filter.value = '';
+			filterBy.value = '';
+		}
+
+		Vue.watch(bahanAjar, (newVal, prev) => {
+			if (timeoutId) clearTimeout(timeoutId);
+			if (newVal.some(r => r.error) || !prev.length) return;
+
+			timeoutId = setTimeout(() => {
+				const payload = [...newVal];
+				localStorage.setItem('dataBahanAjar', JSON.stringify(payload))
+			}, 1000);
+
+		}, { deep: true });
+
 		return {
+			mode,
 			bahanAjar,
-			modalForm,
-			form,
-			handleModalForm,
-			handleSaveData,
-			handleChangeFile,
-			handleRemove
+			colorStatus,
+			filteredBahanAjar,
+			filterOptions,
+			filterBy,
+			filter,
+			sort,
+			upbjjList,
+			kategoriList,
+			isNormalMode: Vue.computed(()=> mode.value === 'normal'),
+			isInsertMode: Vue.computed(()=> mode.value === 'insert'),
+			handleAppendData,
+			handleRemove,
+			handleResetFilter
 		}
 	}
 })

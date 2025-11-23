@@ -69,12 +69,12 @@
 							<h2>Stok Bahan Ajar</h2>
 							<svg xmlns="https://www.w3.org/2000/svg" style="height: 400px" >
 								<g v-for="(item, index) in bahanAjar">
-									<rect :x="(40 * index)" :y="maxStockBahanAjar - (item.stok * .3) + 10" width="20" :height="item.stok * .3"  :fill="item.color" :class="index" />
-									<text :x="(40 * index)" :y="maxStockBahanAjar + 30" fill="black">{{item.stok}}</text>
+									<rect :x="(40 * index)" :y="maxStockBahanAjar - (item.qty) + 10" width="20" :height="item.qty"  :fill="item.color" :class="index" />
+									<text :x="(40 * index)" :y="maxStockBahanAjar + 30" fill="black">{{item.qty}}</text>
 								</g>
 								<g v-for="(item, index) in bahanAjar">
-									<rect :x="0" :y="maxStockBahanAjar + (index * 20) + 50" width="10" height="10" :fill="item.color">{{item.namaBarang}}</rect>
-									<text :x="20" :y="maxStockBahanAjar + (index * 20) + 60" fill="black">{{item.namaBarang}}</text>
+									<rect :x="0" :y="maxStockBahanAjar + (index * 20) + 50" width="10" height="10" :fill="item.color">{{item.judul}}</rect>
+									<text :x="20" :y="maxStockBahanAjar + (index * 20) + 60" fill="black">{{item.judul}}</text>
 								</g>
 							</svg>
 						</section>
@@ -127,7 +127,7 @@
 				},
 				watch:{
 					bahanAjar(next){
-						this.maxStockBahanAjar = Math.max(...next.map(r => r.stok * .3));
+						this.maxStockBahanAjar = Math.max(...next.map(r => r.qty));
 					},
 					tracking(next){
 						const count = Object.values(next).reduce((acc, curr) => {
