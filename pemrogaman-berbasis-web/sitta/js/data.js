@@ -1,4 +1,4 @@
-const releaseVersion = '3.3';
+const releaseVersion = '3.4';
 
 const dataPengguna = [
 	{

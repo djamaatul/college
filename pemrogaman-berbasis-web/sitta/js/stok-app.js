@@ -13,17 +13,16 @@ const sort = Vue.ref('asc');
 
 function syncData() {
 	const version = localStorage.getItem('version');
+
 	if (version !== releaseVersion) {
 		localStorage.setItem('version', releaseVersion);
-		localStorage.removeItem('dataBahanAjar');
-	};
-	const cached = localStorage.getItem('dataBahanAjar')
-	if (!cached) {
 		localStorage.setItem('dataBahanAjar', JSON.stringify(dataBahanAjar))
-	}
+	};
 
-	if (!bahanAjar.value.length) {
-		const dataBahanAjar = [...(cached ? JSON.parse(cached) : [])]
+	const cached = localStorage.getItem('dataBahanAjar')
+
+	if (!bahanAjar.value.length && cached) {
+		const dataBahanAjar = JSON.parse(cached)
 		bahanAjar.value = dataBahanAjar;
 	}
 }
