@@ -3,19 +3,86 @@
    License: none (public domain)
 */
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed, 
-figure, figcaption, footer, header, hgroup, 
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
 	margin: 0;
 	padding: 0;
 	border: 0;
@@ -23,45 +90,74 @@ time, mark, audio, video {
 	font: inherit;
 	vertical-align: baseline;
 }
+
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
 	display: block;
 }
-html {
-	background-color: #EFE9E3;
+
+:root {
+	--primary: #00897B;
+	--secondary: #263238;
+	--background: #ECEFF1;
+	--foreground: #263238;
+	--glass: rgba(0, 0, 0, .1);
+	--red: #f44336
 }
+
+html {
+	background-color: var(--background);
+}
+
 body {
 	line-height: 1;
 }
+
 main {
-	min-width: 80vw;
+	max-width: 1450px;
+	min-height: 100vh;
+	margin: 0px auto;
+	display: flex;
+	flex-direction: column;
+	gap: 2rem;
+	padding: 2rem;
 }
-ol, ul {
+
+ol,
+ul {
 	list-style: none;
 }
-blockquote, q {
+
+blockquote,
+q {
 	quotes: none;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
 	content: '';
 	content: none;
 }
+
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
 
-:root {
-	--primary: #6200EE;
-	--secondary: #3e3e3e;
-	--white: #EFE9E3;
-	--glass: rgba(0, 0, 0, .1);
-	--red: #f44336
-}
-
-body, #app {
+body,
+#app {
 	font-family: Arial, Helvetica, sans-serif;
 	min-height: 100vh;
 	display: flex;
@@ -83,24 +179,37 @@ a {
 }
 
 @keyframes zoom-out {
-  0% {
-    scale: 50%
-  }
-	50% {
-		scale:120%
+	0% {
+		scale: 50%
 	}
-  100% {
-    scale: 100%;
-  }
+
+	50% {
+		scale: 120%
+	}
+
+	100% {
+		scale: 100%;
+	}
 }
 
 @keyframes zoom-in {
-  0% {
-    scale: 100%
-  }
-  100% {
-    scale: 0%;
-  }
+	0% {
+		scale: 100%
+	}
+
+	100% {
+		scale: 0%;
+	}
+}
+
+@keyframes spin {
+	0% {
+		rotate: 0
+	}
+
+	100% {
+		rotate: 360deg;
+	}
 }
 
 dialog {
@@ -120,16 +229,16 @@ dialog {
 	transform: scale(1);
 }
 
-dialog > * {
+dialog>* {
 	animation: zoom-out ease .3s;
 }
 
-dialog:not([open]){
+dialog:not([open]) {
 	transform: scale(0);
 	transition-delay: .2s;
 }
 
-dialog:not([open]) > *{
+dialog:not([open])>* {
 	animation: zoom-in ease .2s;
 }
 
@@ -154,62 +263,62 @@ nav #time {
 	flex: 1;
 	display: flex;
 	justify-content: end;
-	color: var(--white);
+	gap: 20px;
 	font-size: small;
+	color: var(--background);
 }
 
-nav > ul {
+nav>ul {
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
 	flex: 1;
 }
 
-nav > ul a {
+nav>ul a {
 	display: inline-block;
 	padding: 10px;
-	color: var(--white);
 	cursor: pointer;
+	color: var(--background);
 }
-nav > ul a:hover,
-nav > ul a.active {
+
+nav>ul a:hover,
+nav>ul a.active {
 	background-color: var(--primary);
 }
-nav > ul li a.open + ul {
+
+nav>ul li a.open+ul {
 	display: block;
 }
-nav > ul ul {
+
+nav>ul ul {
 	display: none;
 	position: absolute;
 	box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.5);
 	background-color: var(--white);
 }
-nav > ul ul a {
+
+nav>ul ul a {
 	display: block;
 	color: var(--white);
 }
-nav > ul ul a:hover {
-	color: var(--white);
-}
-
-input {
-	padding: 8px;
-}
 
 @media screen and (max-width: 768px) {
-	body, #app {
+
+	body,
+	#app {
 		justify-content: start;
 	}
 
-	nav > ul {
+	nav>ul {
 		flex-direction: column;
 	}
 
-	nav > ul a {
+	nav>ul a {
 		display: block;
 	}
 
-	nav > ul ul {
+	nav>ul ul {
 		position: static;
 	}
 
@@ -220,11 +329,11 @@ input {
 
 button {
 	background-color: var(--primary);
-	color: var(--white);
 	border: none;
 	padding: 10px;
 	box-shadow: 6px 6px var(--secondary);
 	transition: ease .2s;
+	color: var(--background);
 }
 
 button:disabled {
@@ -242,16 +351,23 @@ button:active {
 	scale: .99;
 }
 
-.input {
-	border: none;
-	border-bottom: 1px solid black;
-	padding: 5px;
+select {
+	padding: 8px;
+	border: 1px solid rgba(0, 0, 0, 0.3);
+	background-color: white
 }
 
-.input:focus {
+select:disabled {
+	background-color: rgba(255, 255, 255, .5)
+}
+
+input {
+	padding: 8px;
+}
+
+input:focus {
 	outline: none;
 	color: var(--primary);
-	border-bottom: 1px solid var(--primary);
 }
 
 .form {
@@ -264,7 +380,7 @@ button:active {
 }
 
 .time {
-	color: var(--white);
+	color: var(--background);
 	font-size: smaller;
 }
 
@@ -273,4 +389,199 @@ footer {
 	text-align: center;
 	font-size: small;
 	border-top: 1px solid var(--secondary);
+}
+
+#splashscreen {
+	height: 100vh;
+	width: 100vw;
+	background-color: var(--background);
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+#splashscreen h1 {
+	color: var(--primary);
+	font-weight: bolder;
+	font-size: xx-large;
+}
+
+.loading {
+	display: block;
+	width: 2rem;
+	aspect-ratio: 1;
+	border-top: .5rem solid var(--primary);
+	border-right: .5rem solid var(--primary);
+	border-bottom: .5rem solid var(--primary);
+	border-left: .5rem solid transparent;
+	border-radius: 100%;
+	animation: spin 1s infinite linear;
+}
+
+.container {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 2rem;
+	flex: 1
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	padding: 20px;
+	border: 1px solid var(--secondary);
+	background-color: var(--background);
+}
+
+#stocks {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-evenly;
+	gap: 40px;
+}
+
+.stock {
+	display: flex;
+	flex-direction: column;
+	padding: 10px 20px 20px;
+	gap: 20px;
+	border: 1px solid var(--secondary);
+	box-shadow: 6px 6px var(--secondary);
+	background-color: var(--white);
+	max-width: 280px;
+}
+
+.stock .remove {
+	aspect-ratio: 1;
+	align-self: end;
+	background-color: #f44336;
+}
+
+.stock .remove:hover {
+	scale: 1.1
+}
+
+
+.stock p {
+	font-size: 14px;
+}
+
+.stock img {
+	width: 100%;
+	align-self: center;
+}
+
+.stock .stock-detail {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.filter {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	align-self: flex-end;
+}
+
+.filter .filter-section {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.stok {
+	display: flex;
+	gap: 10px;
+}
+
+.stok input {
+	width: 100%;
+}
+
+.stok .status-stok {
+	padding: 0px 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.catatan {
+	width: 100%;
+	padding: 5px;
+	border: 1px solid black;
+	background-color: 10px;
+}
+
+#tracking {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	padding: 20px;
+}
+
+#tracking #detail {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	background-color: var(--primary);
+	padding: 20px;
+	border-radius: 5px;
+	color: white;
+}
+
+#tracking #detail>div {
+	display: flex;
+	gap: 20px;
+	justify-content: space-between;
+}
+
+#tracking #detail>div>div {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+#tracking #detail table td {
+	padding: 5px 0px;
+	font-size: 12px;
+}
+
+#tracking #perjalanan {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+#tracking #perjalanan>div {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+#tracking #perjalanan #status {
+	display: inline-block;
+	padding: 5px;
+	border-radius: 5px;
+	background-color: var(--primary);
+	color: white;
+}
+
+#tracking #perjalanan table td {
+	padding: 10px;
+	font-size: 12px;
+	border-top: 1px dotted var(--primary);
+	border-bottom: 1px dotted var(--primary);
+}
+
+.error {
+	color: var(--red);
+}
+
+.input-error {
+	border: 1px solid var(--red);
 }
